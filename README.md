@@ -1,6 +1,6 @@
 # Reclaim Your Freedom AI (RYFAI)
 
-Im Peter, the original writer of this program. You can donate to my Venmo if you please, it helps me keep these projects alive!
+Im Peter, the original writer of this program
 This is a program written in mostly Python that brings useful open-source AI to your fingertips.
 
 Are you tired of corporate giants stealing your data when using their products? Well, look no further than RYFAI. We are a project that tries to combat this
