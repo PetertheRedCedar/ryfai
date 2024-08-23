@@ -17,7 +17,3 @@ Heres how to set up.
 2. At the top should be the newest version of the software. Click 'assets' dropdown, select the executable file that is right for your operating system, download it
 3. Enjoy your private AI chat experience
 
-# For developers:
-
-For now, this project will remain closed source for now, but if you are interested in being a part of the developer team, email 'ryfai@proton.me'
-This project is in python (mostly), with a little bash/batch script.
