@@ -17,6 +17,4 @@ Heres how to set up.
 2. At the top should be the newest version of the software. Click 'assets' dropdown, select the executable file that is right for your operating system, download it
 3. Enjoy your private AI chat experience
 
-4. # regarding the sourcecode.
-   this project's source code IS available TO BE SEEN, NOT TO BE FORKED OR CONTRIBUTED TO. you can view it by downloading the .png file from this repository. please do not redistribute the code or plagiarize it, as penalties will ensue.
 
