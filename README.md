@@ -18,5 +18,5 @@ Heres how to set up.
 3. Enjoy your private AI chat experience
 
 4. # regarding the sourcecode.
-   this project's source code IS available. you can view it by downloading the .png file from this repository. please do not redistribute the code or plagiarize it, as penalties will ensue.
+   this project's source code IS available TO BE SEEN, NOT TO BE FORKED OR CONTRIBUTED TO. you can view it by downloading the .png file from this repository. please do not redistribute the code or plagiarize it, as penalties will ensue.
 
