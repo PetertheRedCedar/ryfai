@@ -126,16 +126,6 @@ def main():
             file.write(chat_content)
         easygui.msgbox("Chat saved as chat.txt in the current folder")
 
-    def donate():
-        donation = easygui.buttonbox("Thank you for donating to RYFAI! Please select your donation method:", "Donate to RYFAI!", ["BTC (Bitcoin)", "XMR (Monero)"])
-        if donation == "BTC (Bitcoin)":
-            easygui.msgbox("Thank you so much for donating! Bitcoin address: bc1qjnrvt3d8ms69zusvh244v5h2hya9yhqzsemtc2", "Bitcoin donation")
-            
-        elif donation == "XMR (Monero)":
-            easygui.msgbox("Thank you so much for donating! Monero address: 494oHEbuekCRA8hcWyo81DLPsvy435neSdxJ33m9c4hf5UtJUARrq6f2vU3APWDosFW147pHDv2WK4fVWnWcemHK4d4Ene4", "Monero donation")
-        else:
-            easygui.msgbox("No donation method was selected")
-
     # Create a label to display the current model
     model_label = ctk.CTkLabel(root, text="Current Model: None", width=700, height=30, anchor="w")
     model_label.place(x=0, y=0)
@@ -178,9 +168,6 @@ def main():
 
     about_ryfai = ctk.CTkButton(root, width=100, height=60, text="About RYFAI", command=about)
     about_ryfai.place(x=320, y=500)
-
-    donate_here = ctk.CTkButton(root, text="DONATE", width=100, height=60, command=donate)
-    donate_here.place(x=425, y=500)
 
     root.mainloop()
 
