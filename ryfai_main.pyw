@@ -29,6 +29,20 @@ def main():
         "openchat": "The only model developed by Intel. Ok performance-capability ratio"
     }
 
+    # Read custom models from custommodels.txt if it exists
+    def load_custom_models():
+        custom_models = []
+        if os.path.exists("custommodels.txt"):
+            with open("custommodels.txt", "r") as file:
+                lines = file.readlines()
+                for line in lines:
+                    if line.startswith("(CUST)"):
+                        custom_models.append(line.strip())
+        return custom_models
+
+    custom_models = load_custom_models()
+    all_models = list(model_descriptions.keys()) + custom_models
+
     def is_model_installed(model_name):
         try:
             result = subprocess.run(['ollama', 'list'], capture_output=True, text=True)
@@ -40,28 +54,42 @@ def main():
 
     def install_model(model_name):
         try:
-            
             subprocess.run(['ollama', 'pull', model_name])
             easygui.msgbox(f"Model '{model_name}' installed successfully.")
         except Exception as e:
             easygui.msgbox(f"Error installing model '{model_name}': {e}")
 
     def show_model_description(selected_model):
-        description = model_descriptions.get(selected_model, "No description available.")
-        description_label.configure(text=description)
-        model_label.configure(text=f"Current Model: {selected_model}")
+        if "(CUST)" in selected_model:
+            # Handle custom models
+            actual_model_name = selected_model.replace("(CUST) ", "")
+            model_label.configure(text=f"Current Model: {actual_model_name}")
+        else:
+            # Handle built-in models
+            description = model_descriptions.get(selected_model, "No description available.")
+            description_label.configure(text=description)
+            model_label.configure(text=f"Current Model: {selected_model}")
 
-        if not is_model_installed(selected_model):
-            if easygui.ynbox(f"The model '{selected_model}' is not installed. Do you want to install it now?", 'Install Model', ('Yes', 'No')):
-                install_model(selected_model)
+            if not is_model_installed(selected_model):
+                if easygui.ynbox(f"The model '{selected_model}' is not installed. Do you want to install it now?", 'Install Model', ('Yes', 'No')):
+                    install_model(selected_model)
+
+    def switch_model(selected_model):
+        if "(CUST)" in selected_model:
+            # Switch to the custom model using ollama
+            actual_model_name = selected_model.replace("(CUST) ", "")
+            subprocess.run(['ollama', 'run', actual_model_name])
+        else:
+            # Regular model switching logic (if any) can be added here
+            pass
 
     def howtouse():
         webbrowser.open("https://reclaimyourfreedomai.streamlit.app/")
 
     def about():
-        easygui.msgbox("RYFAI is a completely private AI program that cares about it's users\n"
+        easygui.msgbox("RYFAI is a completely private AI program that cares about its users\n"
                        "It does not steal any user data and sell it to advertisers or use it to train\n"
-                       "models. It is currently NOT open source as well as the RYFAI website, and all\n"
+                       "models. It is currently open source as well as the RYFAI website, and all\n"
                        "models that are used by RYFAI are open-source or open-weights models.")
 
     def send():
@@ -81,11 +109,11 @@ def main():
         # Display the user's input in the chat area
         text_area.configure(state="normal")
         text_area.insert("end", f"User: {user_input}\n")
-        
+
         # Get the response from the model
         response = ""
         stream = ollama.chat(
-            model=selected_model,
+            model=selected_model.replace("(CUST) ", ""),  # Use the actual model name without the (CUST) flag
             messages=[{'role': 'user', 'content': user_input}],
             stream=True,
         )
@@ -99,14 +127,6 @@ def main():
         # Display the model's response in the chat area
         text_area.insert("end", "\n\n")
         text_area.configure(state="disabled")
-
-    def about():
-        easygui.msgbox("What is RYFAI?\n"
-                       "RYFAI is a program that combines the power of AI with regards to a user's privacy. While AI companies have created outstanding AI\n"
-                       "products, the flaws in these AI companies are very much there. Big Tech wants to infiltrate your privacy by selling your\n"
-                       "private data to advertisers. Big Tech only wants the capital, and doesnt care about your privacy. So if Big Tech wont do it, then RYFAI will.\n"
-                       "RYFAI is something different. RYFAI cares about it's user's data and doesn't use them like 'lab rats' for a profit.\n"
-                       "RYFAI is in early development and is NOT open source (may change in the future). Ideas/inquiries for the RYFAI project go to ryfai@proton.me")
 
     def save_as_png():
         # Save the entire window as a PNG image in the current folder
@@ -126,6 +146,57 @@ def main():
             file.write(chat_content)
         easygui.msgbox("Chat saved as chat.txt in the current folder")
 
+    def createyourown():
+        available_models = list(model_descriptions.keys())
+        selected_model = easygui.buttonbox("Select a base model to start creating your own:", "Create Your Own Model", available_models)
+
+        if selected_model:
+            if not is_model_installed(selected_model):
+                if easygui.ynbox(f"The model '{selected_model}' is not installed. Do you want to install it now?", 'Install Model', ('Yes', 'No')):
+                    install_model(selected_model)
+                else:
+                    easygui.msgbox("The model was not installed. Please install the model before creating your own.", "Model Not Installed")
+                    return
+            easygui.msgbox(f"You selected: {selected_model}. You can now customize this model.", "Model Selected")
+
+            naming = easygui.enterbox("What do you want your model to be named? YOUR MODEL MUST HAVE NO SPACES IN THE NAME TO WORK! For example, if I wanted to name my model 'Elon Musk', the model name NEEDS to be something like 'elonmusk'", "Model naming")
+            sysprompt = easygui.enterbox("What do you want the system prompt to be (e.g., 'You know everything about Harry Potter. Speak in the voice of Harry Potter')", f"{naming} system prompt")
+            final = easygui.buttonbox(f"Final settings for customized model:\n\nBase model: {selected_model}\nModel name: {naming}\nSystem prompt: {sysprompt}\n\nDo these settings look good?", "Model finalizing", ["Yes", "No"])
+
+            if final == "Yes":
+                with open(f"{naming}.modelfile", "w+") as newmodelfile:
+                    newmodelfile.write(
+                        f'FROM {selected_model}\n'
+                        f'TEMPLATE """<|im_start|>system\n'
+                        f'{{{{ .System }}}}<|im_end|>\n'
+                        f'<|im_start|>user\n'
+                        f'{{{{ .Prompt }}}}<|im_end|>\n'
+                        f'<|im_start|>assistant\n'
+                        f'"""\n\n'
+                        f'SYSTEM """{sysprompt}"""\n\n'
+                        f'PARAMETER num_ctx 8192\n'
+                        f'PARAMETER temperature 0.7\n'
+                        f'PARAMETER stop "<|im_end|>"'
+                    )
+                subprocess.Popen(f"ollama create {naming} -f {naming}.modelfile")
+                easygui.msgbox(f"Model '{naming}' has been created successfully!", "Model Creation Success")
+                with open("custommodels.txt", "a") as addcustommodel:
+                    addcustommodel.write(f"\n(CUST) {naming}")
+                
+                # Update the dropdown menu with the new custom model
+                custom_models.append(f"(CUST) {naming}")
+                update_model_dropdown()
+                easygui.msgbox("You can now find your custom model under 'Select a model'")
+
+            elif final == "No":
+                createyourown()
+        else:
+            easygui.msgbox("No model was selected.", "Model Selection")
+
+    def update_model_dropdown():
+        # Update the list of models in the dropdown without destroying the widget
+        model_dropdown.configure(values=list(model_descriptions.keys()) + custom_models)
+
     # Create a label to display the current model
     model_label = ctk.CTkLabel(root, text="Current Model: None", width=700, height=30, anchor="w")
     model_label.place(x=0, y=0)
@@ -139,16 +210,16 @@ def main():
     text_area.place(x=0, y=30)
     
     # Create a multi-line text area for user input
-    text_input = ctk.CTkTextbox(root, width=400, height=80)
+    text_input = ctk.CTkTextbox(root, width=295, height=80)
     text_input.insert("1.0", "Write your input here")
     text_input.place(x=5, y=410)
     
     send_button = ctk.CTkButton(root, width=100, height=80, text="Ask", command=send)
-    send_button.place(x=420, y=410)
+    send_button.place(x=310, y=410)
 
     # Create a dropdown button for selecting models
     model_var = ctk.StringVar(value="Select a model")
-    model_dropdown = ctk.CTkOptionMenu(root, values=list(model_descriptions.keys()), variable=model_var, command=show_model_description)
+    model_dropdown = ctk.CTkOptionMenu(root, values=all_models, variable=model_var, command=show_model_description)
     model_dropdown.place(x=530, y=410)
 
     # Create a label to display the model description
@@ -169,7 +240,11 @@ def main():
     about_ryfai = ctk.CTkButton(root, width=100, height=60, text="About RYFAI", command=about)
     about_ryfai.place(x=320, y=500)
 
+    create_your_own_model = ctk.CTkButton(root, text="Create a model!", width=100, height=80, command=createyourown)
+    create_your_own_model.place(x=415, y=410)
+
     root.mainloop()
 
 if __name__ == "__main__":
     main()
+
