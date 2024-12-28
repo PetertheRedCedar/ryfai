@@ -1,3 +1,6 @@
+# MAJOR UPDATE: RYFAI 0.1.0!
+A new, beautiful look using Streamlit, a smoother install process, **Image generation with a lightweight StableDiffusion model**. Conversations automatically saved, so you can come back to them later!
+
 # Reclaim Your Freedom AI (RYFAI)
 
 Im Peter, the original writer of this program
@@ -10,11 +13,16 @@ You can use this program offline as well, ensuring that NO data is being collect
 
 That being said, I encourage you to give this program a good reputation.
 
-Heres how to set up.
+Heres how to set up:
+1. run 'setup.py'
+2. run 'pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu11z streamlit ollama easygui diffusers' **If you have a CUDA capable GPU**. If you do not, run 'pip install torch torchvision torchaudio easygui streamlit diffusers ollama' the normal way.
+3. Developers, feel free to create a new issue at the top left if you run into issues or have requests.
 
 # For non-developers
 1. Click 'releases' (right side of the screen)
 2. At the top should be the newest version of the software. Click 'assets' dropdown, select the executable file that is right for your operating system, download it
-3. Enjoy your private AI chat experience
+3. Extract the zip file.
+4. Double-click setup.exe (or setup.AppImage on Linux)
+5. enjoy private AI chatting!
 
 
