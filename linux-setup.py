@@ -4,7 +4,7 @@ import os
 def install_ryfai():
 	gpu_cpu = easygui.buttonbox("Welcome to RYFAI!\n"
 				    "Good on you for choosing private AI!"
-				    "More information on the RYFAI website https://ryfai.streamlit.app\n\n"
+				    "More information on the RYFAI website https://reclaimyourfreedomai.streamlit.app\n\n"
 				    "Would you like to set up with an NVIDIA gpu or CPU only?\n\n",
 				    "RYFAI setup.",
 				    ["Set up with NVIDIA gpu", "Set up with CPU only"]
