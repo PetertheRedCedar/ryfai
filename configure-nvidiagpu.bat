@@ -22,6 +22,64 @@ set log_file="%~dp0script_errors.log"
 :: Helper function for logging progress
 call :log "Script starting."
 
+:: Check if Winget is installed
+winget --version >nul 2>>%log_file%
+if errorlevel 1 (
+    call :log "Winget is not installed. Downloading and installing Winget..."
+    
+    :: Download the Winget installer
+    curl -L -o "%~dp0AppInstaller.msixbundle" https://github.com/microsoft/winget-cli/releases/latest/download/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle >> %log_file% 2>&1
+    if not exist "%~dp0AppInstaller.msixbundle" (
+        call :log "Failed to download Winget installer. Exiting."
+        pause
+        exit /b 1
+    )
+    
+    :: Install Winget
+    call :log "Installing Winget..."
+    powershell -Command "Add-AppxPackage -Path '%~dp0AppInstaller.msixbundle'" >> %log_file% 2>&1
+    winget --version >nul 2>>%log_file%
+    if errorlevel 1 (
+        call :log "Winget installation failed. Exiting."
+        pause
+        exit /b 1
+    )
+) else (
+    call :log "Winget is already installed."
+)
+
+:: Install Rust using Winget
+call :log "Checking if Rust is installed..."
+rustc --version >nul 2>>%log_file%
+if errorlevel 1 (
+    call :log "Rust is not installed. Installing Rust using Winget..."
+    winget install -e --id Rustlang.Rustup >> %log_file% 2>&1
+    rustc --version >nul 2>>%log_file%
+    if errorlevel 1 (
+        call :log "Failed to install Rust. Exiting."
+        pause
+        exit /b 1
+    )
+) else (
+    call :log "Rust is already installed."
+)
+
+:: Install Ollama using Winget
+call :log "Checking if Ollama is installed..."
+ollama --version >nul 2>>%log_file%
+if errorlevel 1 (
+    call :log "Ollama is not installed. Installing Ollama using Winget..."
+    winget install -e --id Ollama.Ollama >> %log_file% 2>&1
+    ollama --version >nul 2>>%log_file%
+    if errorlevel 1 (
+        call :log "Failed to install Ollama. Exiting."
+        pause
+        exit /b 1
+    )
+) else (
+    call :log "Ollama is already installed."
+)
+
 :: Check if Python is installed
 python --version >nul 2>>%log_file%
 if errorlevel 1 (
@@ -95,5 +153,4 @@ exit /b 0
     echo [%time%] %~1 >> %log_file%
     echo %~1
     goto :eof
-
 
