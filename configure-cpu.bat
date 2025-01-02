@@ -25,7 +25,7 @@ if errorlevel 1 (
     
     :: Install Winget
     call :log "Installing Winget..."
-    powershell -Command "Add-AppxPackage -Path '%~dp0AppInstaller.msixbundle'" >> %log_file% 2>&1
+    powershell -Command "Start-Process -Wait powershell -ArgumentList 'Add-AppxPackage -Path \"%~dp0AppInstaller.msixbundle\"' -Verb RunAs" >> %log_file% 2>&1
     winget --version >nul 2>>%log_file%
     if errorlevel 1 (
         call :log "Winget installation failed. Exiting."
@@ -41,7 +41,8 @@ call :log "Checking if Rust is installed..."
 rustc --version >nul 2>>%log_file%
 if errorlevel 1 (
     call :log "Rust is not installed. Installing Rust using Winget..."
-    winget install -e --id Rustlang.Rustup >> %log_file% 2>&1
+    echo Installing Rust...
+    winget install -e --id Rustlang.Rustup --interactive
     rustc --version >nul 2>>%log_file%
     if errorlevel 1 (
         call :log "Failed to install Rust. Exiting."
@@ -57,7 +58,8 @@ call :log "Checking if Ollama is installed..."
 ollama --version >nul 2>>%log_file%
 if errorlevel 1 (
     call :log "Ollama is not installed. Installing Ollama using Winget..."
-    winget install -e --id Ollama.Ollama >> %log_file% 2>&1
+    echo Installing Ollama...
+    winget install -e --id Ollama.Ollama --interactive
     ollama --version >nul 2>>%log_file%
     if errorlevel 1 (
         call :log "Failed to install Ollama. Exiting."
@@ -126,7 +128,7 @@ streamlit run "%~dp0ryfai.py" >> %log_file% 2>&1
 if errorlevel 1 (
     call :log "Failed to launch RYFAI. Exiting."
     pause
-    exit /b 1
+        exit /b 1
 )
 
 call :log "Script completed successfully."
