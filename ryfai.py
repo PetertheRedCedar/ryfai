@@ -282,6 +282,5 @@ def start_new_conversation():
     st.session_state['current_conversation'] = default_title
     save_conversations()
 
-
 if __name__ == "__main__":
     main()
